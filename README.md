@@ -15,7 +15,7 @@ TODO:
 * ...
 
 Test output:
-![alt text](img.png1 "Screenshot")
+![alt text](img1.png "Screenshot")
 
 ## Dependencies
 
