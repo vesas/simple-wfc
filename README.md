@@ -14,7 +14,8 @@ TODO:
 * Propagation
 * ...
 
-Test output:
+## Test output:
+
 ![example image](image.png)
 
 ## Dependencies
