@@ -20,4 +20,4 @@ TODO:
 
 ## Dependencies
 
-None
+Displaying is done using LibGDX
