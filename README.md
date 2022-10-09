@@ -18,6 +18,10 @@ TODO:
 
 ![example image](image.png)
 
+![example image](image2.png)
+
+![example image](image3.png)
+
 ## Dependencies
 
 Displaying is done using LibGDX
