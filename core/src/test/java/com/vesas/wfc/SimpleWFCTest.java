@@ -10,7 +10,7 @@ public class SimpleWFCTest {
 
     @Test
     public void testRotation1() {
-        SimpleWFC wfc = new SimpleWFC(2,1, 3, true);
+        SimpleWFC wfc = new SimpleWFC(2,1, 3, true, true);
         
         Constraints constraints = new Constraints();
         wfc.setSeed(999);
@@ -38,7 +38,7 @@ public class SimpleWFCTest {
 
     @Test
     public void testRotation2() {
-        SimpleWFC wfc = new SimpleWFC(2,2, 3, true);
+        SimpleWFC wfc = new SimpleWFC(2,2, 3, true, true);
         
         Constraints constraints = new Constraints();
         wfc.setSeed(3);
@@ -78,7 +78,7 @@ public class SimpleWFCTest {
 
     @Test
     public void testRotation() {
-        SimpleWFC wfc = new SimpleWFC(2,1, 3, true);
+        SimpleWFC wfc = new SimpleWFC(2,1, 3, true, true);
         
         Constraints constraints = new Constraints();
         wfc.setSeed(999);
@@ -105,7 +105,7 @@ public class SimpleWFCTest {
     public void test1() {
         
 
-        SimpleWFC wfc = new SimpleWFC(1,2, 3, true);
+        SimpleWFC wfc = new SimpleWFC(1,2, 3, true, true);
         wfc.setSeed(5115);
 
         Constraints constraints = new Constraints();
@@ -134,7 +134,7 @@ public class SimpleWFCTest {
 
     @Test
     public void test2() {
-        SimpleWFC wfc = new SimpleWFC(2,2, 2, true);
+        SimpleWFC wfc = new SimpleWFC(2,2, 2, true, true);
         wfc.setPos(1,1, 0);
         wfc.printGrid();
     }

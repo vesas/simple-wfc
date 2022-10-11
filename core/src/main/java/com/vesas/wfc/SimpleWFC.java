@@ -268,7 +268,7 @@ public class SimpleWFC {
 
     }
 
-    public SimpleWFC(int w, int h, int tileCount, boolean emptyAllowed) {
+    public SimpleWFC(int w, int h, int tileCount, boolean emptyAllowed, boolean rotationsAllowed) {
         
         this.emptyAllowed = emptyAllowed;
         this.tileCount = tileCount;
@@ -283,7 +283,10 @@ public class SimpleWFC {
             // 2 = one rotation (CCW)
             // 4 = two CCW
             // 8 = three CCW
-            ALL_TILES.add(new TileAndRotation(i, 15));
+            if(rotationsAllowed)
+                ALL_TILES.add(new TileAndRotation(i, 15));
+            else
+                ALL_TILES.add(new TileAndRotation(i, 1));
         }
 
         for(int temp_h = 0; temp_h < this.height;temp_h++) {
@@ -302,7 +305,10 @@ public class SimpleWFC {
 
                 // 8 + 4 + 2 + 1 = 15
                 for(int i= 0; i < rotations.length;i++) {
-                    rotations[i] = 15;
+                    if(rotationsAllowed)
+                        rotations[i] = 15;
+                    else
+                        rotations[i] = 1;
                 }
             }
         }

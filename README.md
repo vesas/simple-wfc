@@ -22,6 +22,8 @@ TODO:
 
 ![example image](image3.png)
 
+![example image](wfc7.gif)
+
 ## Dependencies
 
 Displaying is done using LibGDX
