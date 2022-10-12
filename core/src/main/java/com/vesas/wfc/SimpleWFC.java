@@ -127,52 +127,6 @@ public class SimpleWFC {
 
         Map<StateDir,Integer> ports = new HashMap<StateDir,Integer>();
 
-        public List<Integer> getTransitions(int sourceTileId, DIR dir, int rotations) {
-         
-            int index = 1;
-            while (rotations > 0)
-            {
-                if((rotations % 2) == 1)
-                {
-                    DIR tempDir = dir.fromBitMask(rotations);
-
-                    StateDir stateDir = new StateDir();
-                    stateDir.state = sourceTileId;
-                    stateDir.dir = dir.fromBitMask(rotations);
-
-                    /*
-                    List<Integer> subarr = ports.get(stateDir);
-
-                    if(subarr == null) {
-                        subarr = new ArrayList<>();
-                    }
-                     */
-                }
-                index++;
-                rotations /= 2;
-            }
-
-            
-            return null;
-        }
-
-        public List<Integer> getTransitions(int sourceTileId, DIR dir) {
-
-            StateDir stateDir = new StateDir();
-            stateDir.state = sourceTileId;
-            stateDir.dir = dir;
-
-            /*
-            List<Integer> subarr = ports.get(stateDir);
-
-            if(subarr == null) {
-                subarr = new ArrayList<>();
-            }
-            return subarr;
-             */
-            return null;
-        }
-
         public void addPort(int source, DIR dir, int portId) {
             StateDir stateDir = new StateDir();
             stateDir.state = source;
@@ -545,44 +499,6 @@ public class SimpleWFC {
         }
     }
 
-    // In x, y position, looking at target dir, which tiles are allowed at the target position?
-    private Set<TileAndRotation> allAllowedTilesAtTarget(int x, int y, DIR dir) {
-
-        // 1) get all tiles at location
-        int [] sourceTiles = idGrid[x][y];
-        int [] sourceRotations = rotationGrid[x][y];
-
-        Set<TileAndRotation> ret = new HashSet<TileAndRotation>();
-
-        // iterate the stack of current possible tiles at the source
-        for(int i = 0; i < sourceTiles.length; i++) {
-            int val = sourceTiles[i];
-            int possibleRotations = sourceRotations[i];
-
-            int rotsRet = 0;
-            // 1 == N, 2 == E, 4 == S, 8 == W
-            if((possibleRotations & 1) == 1) {
-                List<Integer> transitions = constraints.getTransitions(val, dir);
-            }
-            if((possibleRotations & 2) == 2) {
-                List<Integer> transitions = constraints.getTransitions(val, dir.fromBitMask(2));
-            }
-            
-
-            // no port defined transitions found -> all are still allowed
-            // if(transitions.isEmpty()) {
-                // return allTilesSet();
-            // }
-            // else {
-                // ret.addAll(transitions);
-            // }
-
-            int qwe = 0;
-        }
-
-        return ret;
-    }
-
     private boolean contains(int port, int targetTile, int targetRot, DIR dir) {
         
         if((targetRot & 1) == 1) {
@@ -810,61 +726,6 @@ public class SimpleWFC {
         }
     }
 
-    
-    private Set<TileAndRotation> allAllowedTilesAtSource(int x, int y, DIR dir) {
-        // 1) get all tiles at location
-        int [] sourceTiles = idGrid[x][y];
-        int [] sourceRotations = rotationGrid[x][y];
-
-        Set<TileAndRotation> ret = new HashSet<TileAndRotation>();
-
-        // 2) all from constraints which tiles are allowed for all tiles at location
-
-        for(int i = 0; i < sourceTiles.length; i++) {
-            int val = sourceTiles[i];
-
-            List<Integer> transitions = constraints.getTransitions(val, dir);
-
-            int qwe = 0;
-            // no port defined transitions found -> all are still allowed
-            if(transitions.isEmpty()) {
-                qwe = 0;
-                // ret.add(val);
-            }
-            else {
-                if(dir == DIR.N) {
-                    // check each target 
-                    int [] targetTiles = idGrid[x][y+1];
-
-                    
-                    // if(containsAny(transitions, targetTiles))
-                        qwe = 0;
-                        // ret.add(val);
-                }
-                else if(dir == DIR.S) {
-                    int [] targetTiles = idGrid[x][y-1];
-                    // if(containsAny(transitions, targetTiles))
-                        qwe = 0;
-                        // ret.add(val);
-                }
-                else if(dir == DIR.W) {
-                    int [] targetTiles = idGrid[x-1][y];
-                    // if(containsAny(transitions, targetTiles))
-                        qwe = 0;
-                        // ret.add(val);
-                }
-                else if(dir == DIR.E) {
-                    int [] targetTiles = idGrid[+1][y];
-                    // if(containsAny(transitions, targetTiles))
-                        qwe = 0;    
-                        // ret.add(val);
-                }
-            }
-        }
-
-        return ret;
-    }
-
 
     public void setPos(int x, int y, int value) {
         int [] temp = { value };
@@ -874,34 +735,6 @@ public class SimpleWFC {
     public void setRotation(int x, int y, int value) {
         int [] temp = { value };
         rotationGrid[x][y] = temp;
-    }
-
-    private boolean atLeftEdge(int pos) {
-        int stride = this.width;
-        int y = pos / stride;
-        int x = pos % stride;
-        return x==0;
-    }
-
-    private boolean atRightEdge(int pos) {
-        int stride = this.width;
-        int y = pos / stride;
-        int x = pos % stride;
-        return x==(this.width-1);
-    }
-
-    private boolean atTopEdge(int pos) {
-        int stride = this.width;
-        int y = pos / stride;
-        int x = pos % stride;
-        return y==(this.height-1);
-    }
-
-    private boolean atBottomEdge(int pos) {
-        int stride = this.width;
-        int y = pos / stride;
-        int x = pos % stride;
-        return y==0;
     }
 
     // filter out ports pointing at dir, because we are edge looking at dir
