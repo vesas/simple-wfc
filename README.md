@@ -11,16 +11,15 @@ TODO:
 * Backtracking
 * 3D
 * Symmetries
-* Propagation
 * ...
 
 ## Test output:
 
+![example image](wfc9.gif)
+
 ![example image](image.png)
 
 ![example image](image2.png)
-
-![example image](image3.png)
 
 ![example image](wfc7.gif)
 

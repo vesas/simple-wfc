@@ -20,6 +20,25 @@ public class SimpleWFC {
         public int y;
     }
 
+    static public class CoordFromTo {
+
+        public CoordFromTo(int x, int y, int toX, int toY, DIR dir) {
+            this.from.x = x;
+            this.from.y = y;
+            this.to.x = toX;
+            this.to.y = toY;
+            this.dir = dir;
+        }
+
+        public DIR fromToDir() {
+            return this.dir;
+        }
+
+        public DIR dir = DIR.N;
+        public Coord from = new Coord();
+        public Coord to = new Coord();
+    }
+
     static public enum DIR {
         N,E,S,W;
         
@@ -32,6 +51,19 @@ public class SimpleWFC {
                 ord--;
                 if(ord < 0) {
                     ord = 3;
+                }
+            }
+            return DIR.values()[ord];
+        }
+
+        // rotates clockwise (times must be between 0 and 3, inclusive)
+        public DIR rotateCW(int times) {
+            int ord = this.ordinal();
+
+            for(int i = 0; i < times; i++) {
+                ord++;
+                if(ord > 3) {
+                    ord = 0;
                 }
             }
             return DIR.values()[ord];
@@ -125,6 +157,9 @@ public class SimpleWFC {
 
     static public class Constraints {
 
+        public Constraints() {
+        }
+        
         Map<StateDir,Integer> ports = new HashMap<StateDir,Integer>();
 
         public void addPort(int source, DIR dir, int portId) {
@@ -132,6 +167,20 @@ public class SimpleWFC {
             stateDir.state = source;
             stateDir.dir = dir;
             ports.put(stateDir,portId);
+        }
+
+        public int getPort(int source, DIR dir, int targetRots) {
+
+            StateDir stateDir = new StateDir();
+            stateDir.state = source;
+            stateDir.dir = dir;
+
+            Integer port = ports.get(stateDir);
+
+            if(port != null)
+                return port;
+            else
+                return -1;
         }
 
         public int getPort(int source, DIR dir) {
@@ -373,8 +422,8 @@ public class SimpleWFC {
                 int pos_len = possibilities.length;
 
                 System.out.print(" [");
-                for (int i : possibilities) {
-                    System.out.print("" + i );
+                for(int i = 0; i < pos_len; i++) {
+                    System.out.print("" + possibilities[i] );
                     if(i < (pos_len-1)) {
                         System.out.print(",");
                     }
@@ -912,7 +961,7 @@ public class SimpleWFC {
         return ret;
     }
 
-    private void observe() {
+    public void observe() {
 
         int pos = this.findLowEntrypy();
 
@@ -1044,21 +1093,279 @@ public class SimpleWFC {
         return count;
     }
 
-    private void propagate() {
-        
-        Queue<Coord> coords = new LinkedList<Coord>();
+    private Queue<CoordFromTo> coords = new LinkedList<CoordFromTo>();
+
+    public void propagate() {
 
         int x = this.lastModifiedX;
         int y = this.lastModifiedY;
 
+        // System.out.println(String.format("propagate from x: %d y: %d", x, y));
 
+        // north direction
+        if(y == (height-1)) {
+            // at top, only add if wraparound is specified
+            if(this.tilingVertical) {
+                CoordFromTo fromTo = new CoordFromTo(x,y, x, 0, DIR.N);
+                coords.add(fromTo);
+            }
 
-        // flood fill possible values (ie. remove values that cannot exist bec of constraints)
-        // temp
+        }
+        else {
+            CoordFromTo fromTo = new CoordFromTo(x,y, x, y+1, DIR.N);
+            coords.add(fromTo);
+        }
+        // south direction
+        if(y == 0) {
+            // at bottom, only add if wraparound is specified
+            if(this.tilingVertical) {
+                CoordFromTo fromTo = new CoordFromTo(x,y, x, height-1, DIR.S);
+                coords.add(fromTo);
+            }
+
+        }
+        else {
+            CoordFromTo fromTo = new CoordFromTo(x,y, x, y-1, DIR.S);
+            coords.add(fromTo);
+        }
+        // west direction
+        if(x == 0) {
+            // at left side, only add if wraparound is specified
+            if(this.tilingVertical) {
+                CoordFromTo fromTo = new CoordFromTo(x,y, width-1,y, DIR.W);
+                coords.add(fromTo);
+            }
+
+        }
+        else {
+            CoordFromTo fromTo = new CoordFromTo(x,y, x-1, y, DIR.W);
+            coords.add(fromTo);
+        }
+
+        // east
+        if(x == (width-1)) {
+            // at right side, only add if wraparound is specified
+            if(this.tilingVertical) {
+                CoordFromTo fromTo = new CoordFromTo(x,y, 0,y, DIR.E);
+                coords.add(fromTo);
+            }
+
+        }
+        else {
+            CoordFromTo fromTo = new CoordFromTo(x,y, x+1, y, DIR.E);
+            coords.add(fromTo);
+        }
+
+        
+        
+        while(!coords.isEmpty()) {
+
+            CoordFromTo co = coords.poll();
+            
+            boolean changed = checkSinglePropTile(co);
+
+            if(changed) {
+                // add all tiles leading out, except from tile
+
+                // north
+                // do not go back to the same tile
+                if(co.dir != DIR.S) {
+                    if(co.from.y == (height-1)) {
+                        // at top, only add if wraparound is specified
+                        if(this.tilingVertical) {
+                            CoordFromTo fromTo = new CoordFromTo(x,y, x, 0, DIR.N);
+                            coords.add(fromTo);
+                        }
+
+                    }
+                    else {
+                        CoordFromTo fromTo = new CoordFromTo(x,y, x, y+1, DIR.N);
+                        coords.add(fromTo);
+                    }
+                }
+                
+                // south direction
+                // do not go back to the same tile
+                if(co.dir != DIR.N) {
+                    if(co.from.y == 0) {
+                        // at bottom, only add if wraparound is specified
+                        if(this.tilingVertical) {
+                            CoordFromTo fromTo = new CoordFromTo(x,y, x, height-1, DIR.S);
+                            coords.add(fromTo);
+                        }
+
+                    }
+                    else {
+                        CoordFromTo fromTo = new CoordFromTo(x,y, x, y-1, DIR.S);
+                        coords.add(fromTo);
+                    }
+                }
+                
+                // west direction
+                // do not go back to the same tile
+                if(co.dir != DIR.E) {
+                    if(co.from.x == 0) {
+                        // at left side, only add if wraparound is specified
+                        if(this.tilingVertical) {
+                            CoordFromTo fromTo = new CoordFromTo(x,y, width-1,y, DIR.W);
+                            coords.add(fromTo);
+                        }
+
+                    }
+                    else {
+                        CoordFromTo fromTo = new CoordFromTo(x,y, x-1, y, DIR.W);
+                        coords.add(fromTo);
+                    }
+                }
+
+                // east
+                // do not go back to the same tile
+                if(co.dir != DIR.W) {
+                    if(co.from.x == (width-1)) {
+                        // at right side, only add if wraparound is specified
+                        if(this.tilingVertical) {
+                            CoordFromTo fromTo = new CoordFromTo(x,y, 0,y, DIR.E);
+                            coords.add(fromTo);
+                        }
+
+                    }
+                    else {
+                        CoordFromTo fromTo = new CoordFromTo(x,y, x+1, y, DIR.E);
+                        coords.add(fromTo);
+                    }
+                }
+            }
+        }
+
+        coords.clear();
+
         finished = true;
     }
 
-    private boolean isFinished() {
+    private Set<Integer> allowedPorts(int [] checktilesFrom, int [] checkrotsFrom, DIR dir)  {
+        // int [] ports = new int[checktilesFrom.length];
+        Set<Integer> ports = new HashSet<Integer>();
+
+        for(int i = 0; i < checktilesFrom.length; i++) {
+
+            int tile = checktilesFrom[i];
+            int rot = checkrotsFrom[i];
+
+            if((rot & 1) == 1) { 
+                int port = constraints.getPort(tile, dir);
+                ports.add(port);
+            }
+            if((rot & 2) == 2) { 
+                int port = constraints.getPort(tile, dir.rotateCCW(1));
+                ports.add(port);
+            }
+            if((rot & 4) == 4) { 
+                int port = constraints.getPort(tile, dir.rotateCCW(2));
+                ports.add(port);
+            }
+            if((rot & 8) == 8) { 
+                int port = constraints.getPort(tile, dir.rotateCCW(3));
+                ports.add(port);
+            }
+
+        }
+        
+        return ports;
+    }
+
+    // narrows tiles, and 
+    // returns true if something changed, add all other dirs except from
+    public boolean checkSinglePropTile(CoordFromTo coordFromTo) {
+
+        boolean changed = false;
+
+        int [] checktilesTo = idGrid[coordFromTo.to.x][coordFromTo.to.y];
+        int [] checkrotsTo = rotationGrid[coordFromTo.to.x][coordFromTo.to.y];
+
+        int [] checktilesFrom = idGrid[coordFromTo.from.x][coordFromTo.from.y];
+        int [] checkrotsFrom = rotationGrid[coordFromTo.from.x][coordFromTo.from.y];
+
+        DIR dir = coordFromTo.dir;
+        DIR opposite = dir.opposite();
+
+        int [] newtiles = new int[checktilesTo.length];
+        int [] newrots = new int[checktilesTo.length];
+        int newlen = 0;
+        int newrot = 0;
+
+        Set<Integer> allowedPortsFrom = allowedPorts(checktilesFrom, checkrotsFrom, dir);
+
+        for(int i = 0; i < checktilesTo.length; i++) {
+            int tileTo = checktilesTo[i];
+            int rotTo = checkrotsTo[i];
+
+            // remove rots, check at end if rots is 0
+            newrot = rotTo;
+
+            if((rotTo & 1)== 1) {
+
+                int port = constraints.getPort(tileTo, opposite);
+
+                if(!allowedPortsFrom.contains(port)) {
+                    newrot = newrot & ~1;
+                    changed = true;
+                }
+            }
+
+            if((rotTo & 2)== 2) {
+
+                int port = constraints.getPort(tileTo, opposite.rotateCCW(1));
+
+                if(!allowedPortsFrom.contains(port)) {
+                    newrot = newrot & ~2;
+                    changed = true;
+                }
+            }
+
+            if((rotTo & 4) == 4) {
+
+                int port = constraints.getPort(tileTo, opposite.rotateCCW(2));
+
+                if(!allowedPortsFrom.contains(port)) {
+                    newrot = newrot & ~4;
+                    changed = true;
+                }
+            }
+
+            if((rotTo & 8) == 8) {
+
+                int port = constraints.getPort(tileTo, opposite.rotateCCW(3));
+
+                if(!allowedPortsFrom.contains(port)) {
+                    newrot = newrot & ~8;
+                    changed = true;
+                }
+            }
+
+            if(newrot > 0)  {
+                newtiles[newlen] = tileTo;
+                newrots[newlen] = newrot;
+                newlen++;
+            }
+        }
+
+        if(newlen != checktilesTo.length)
+            changed = true;
+
+        int [] tempres = new int[newlen];
+        System.arraycopy(newtiles, 0, tempres, 0, newlen);
+        idGrid[coordFromTo.to.x][coordFromTo.to.y] = tempres;
+
+        int [] temprots = new int[newlen];
+        System.arraycopy(newrots, 0, temprots, 0, newlen);
+        rotationGrid[coordFromTo.to.x][coordFromTo.to.y] = temprots;
+        
+        return changed;
+    }
+
+
+
+    public boolean isFinished() {
 
         boolean ret = true;
         for(int h = 0; h < this.height;h++) {

@@ -8,11 +8,23 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.vesas.wfc.SimpleWFC.Constraints;
 import com.vesas.wfc.SimpleWFC.DIR;
 
 public class MyGdxGame extends ApplicationAdapter {
+
+	private Stage stage;
+	private Table table;
+	private Skin skin;
+
 	SpriteBatch batch;
 	ShapeRenderer shaperend;
 	Texture [] textures;
@@ -25,21 +37,45 @@ public class MyGdxGame extends ApplicationAdapter {
 	int lighteffect_x = 0;
 	int lighteffect_y = 0;
 
-	int TILE_W = 128;
-	int TILE_H = 64;
-	int GRID_W = 7;
-	int GRID_H = 10;
+	int TILE_W = 32;
+	int TILE_H = 32;
+	int GRID_W = 28;
+	int GRID_H = 20;
 	
 	@Override
 	public void create () {
+
+		skin = new Skin(Gdx.files.internal("uiskin.json"));
+		
+		stage = new Stage();
+		Gdx.input.setInputProcessor(stage);
+
+		table = new Table();
+		table.setFillParent(true);
+		stage.addActor(table);
+
+		// final TextButton button = new TextButton("Click me!", skin);
+		// table.add(button);
+
+		/*
+		button.addListener(new ChangeListener() {
+			public void changed (ChangeEvent event, Actor actor) {
+				System.out.println("Clicked! Is checked: " + button.isChecked());
+				button.setText("Good job!");
+			}
+		});
+		 
+		table.setDebug(true); // This is optional, but enables debug lines for tables.
+		*/
+
 		batch = new SpriteBatch();
 
 		shaperend = new ShapeRenderer();
-
-		int tileCount = 19;
+    
+		int tileCount = 9;
 		boolean emptyAllowed = true;
-		boolean rotationsAllowed = false;
-		String basename = "flowc";
+		boolean rotationsAllowed = true;
+		String basename = "circ";
 
 		if(emptyAllowed)
 			// do not need texture for empty tile
@@ -53,75 +89,39 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 
 		wfc = new SimpleWFC(GRID_W,GRID_H, tileCount, emptyAllowed, rotationsAllowed);
-        wfc.setSeed(4);
+        wfc.setSeed(6);
 
         // wfc.setInputTexture("test_wfc_input1.png", 2, 2, 16, 16);
 
-		wfc.setTilingVertical(false);
-		wfc.setTilingHorizontal(false);
+		wfc.setTilingVertical(true);
+		wfc.setTilingHorizontal(true);
 
         Constraints constraints = new Constraints();
 
 		constraints.addPort(1, DIR.S, 1);
 		constraints.addPort(1, DIR.E, 1);
+		constraints.addPort(1, DIR.N, 1);
+		constraints.addPort(1, DIR.W, 1);
 
 		constraints.addPort(2, DIR.S, 1);
-		constraints.addPort(2, DIR.E, 1);
+		constraints.addPort(2, DIR.N, 2);
 
-		constraints.addPort(3, DIR.W, 1);
-		constraints.addPort(3, DIR.E, 1);
+		constraints.addPort(3, DIR.N, 2);
 
-		constraints.addPort(4, DIR.N, 1);
-		constraints.addPort(4, DIR.S, 1);
+		constraints.addPort(4, DIR.N, 2);
+		constraints.addPort(4, DIR.W, 2);
 
-		constraints.addPort(5, DIR.W, 1);
-		constraints.addPort(5, DIR.N, 1);
+		constraints.addPort(5, DIR.S, 1);
 
-		constraints.addPort(6, DIR.N, 1);
+		constraints.addPort(6, DIR.N, 2);
+		constraints.addPort(6, DIR.W, 2);
+		constraints.addPort(6, DIR.E, 2);
 
-		constraints.addPort(7, DIR.N, 1);
+		constraints.addPort(7, DIR.N, 2);
+		constraints.addPort(7, DIR.S, 2);
 
-		constraints.addPort(8, DIR.W, 1);
-		constraints.addPort(8, DIR.S, 1);
-
-		constraints.addPort(9, DIR.N, 1);
-		constraints.addPort(9, DIR.S, 1);
-		constraints.addPort(9, DIR.W, 1);
-		constraints.addPort(9, DIR.E, 1);
-
-		constraints.addPort(10, DIR.W, 1);
-		constraints.addPort(10, DIR.N, 1);
-
-		constraints.addPort(11, DIR.W, 1);
-		constraints.addPort(11, DIR.N, 1);
-
-		constraints.addPort(12, DIR.E, 1);
-		constraints.addPort(12, DIR.S, 1);
-
-		constraints.addPort(13, DIR.W, 1);
-		constraints.addPort(13, DIR.N, 1);
-		constraints.addPort(13, DIR.E, 1);
-		constraints.addPort(13, DIR.S, 1);
-
-		constraints.addPort(14, DIR.W, 1);
-		constraints.addPort(14, DIR.E, 1);
-		constraints.addPort(14, DIR.S, 1);
-
-		constraints.addPort(15, DIR.W, 1);
-		constraints.addPort(15, DIR.N, 1);
-		constraints.addPort(15, DIR.E, 1);
-
-		constraints.addPort(16, DIR.W, 1);
-		constraints.addPort(16, DIR.N, 1);
-
-		constraints.addPort(17, DIR.E, 1);
-		constraints.addPort(17, DIR.N, 1);
-
-		constraints.addPort(18, DIR.E, 1);
-		constraints.addPort(18, DIR.N, 1);
-		constraints.addPort(18, DIR.W, 1);
-		constraints.addPort(18, DIR.S, 1);
-
+		constraints.addPort(8, DIR.N, 2);
+		constraints.addPort(8, DIR.S, 2);
 
 		wfc.setConstraints(constraints);
 		wfc.printConstraints();
@@ -133,6 +133,12 @@ public class MyGdxGame extends ApplicationAdapter {
             @Override
             public boolean keyTyped (char key) {
 
+				if(key == '1') {
+					runAll();
+				}
+				if(key == '2') {
+					saveTexture();
+				}
 				if(key == ' ') {
 					runRound();
 				}
@@ -142,16 +148,45 @@ public class MyGdxGame extends ApplicationAdapter {
 				if(key == 'c')  {
 					wfc.printConstraints();
 				}
+				if(key == 'r')  {
+					wfc.printRotations();
+				}
+				if(key == 'o')  {
+					wfc.observe();
+				}
+				if(key == 'p')  {
+					wfc.propagate();
+				}
                 return true;
             }
         });
 		
 	}
 
+	private void saveTexture() {
+
+	}
+
+	private void runAll() {
+
+		while(true) {
+
+			wfc.runOneRound();
+		
+			this.lighteffect_x = wfc.getLastModifiedX();
+			this.lighteffect_y = wfc.getLastModifiedY();
+			this.lighteffect = 0.6f;
+
+			if(wfc.isFinished())
+				break;
+		}
+	}
+
 	private void runRound() {
 		System.out.println("SPACE!");
 
 		wfc.runOneRound();
+		
 		grid = wfc.getGrid();
 		rots = wfc.getRots();
 
@@ -199,6 +234,7 @@ public class MyGdxGame extends ApplicationAdapter {
 								s.setRotation(-j * 90);
 								s.setPosition(x*TILE_W,y*TILE_H);
 								s.draw(batch);
+
 							}
 						}
 					}
@@ -207,10 +243,20 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 
 		batch.end();
+
+		stage.act(Gdx.graphics.getDeltaTime());
+		stage.draw();
 	}
 	
 	@Override
 	public void dispose () {
 		batch.dispose();
+		stage.dispose();
 	}
+
+	public void resize (int width, int height) {
+		stage.getViewport().update(width, height, true);
+	}
+	
+	
 }
