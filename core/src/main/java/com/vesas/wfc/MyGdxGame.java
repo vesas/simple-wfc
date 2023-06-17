@@ -8,13 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.vesas.wfc.SimpleWFC.Constraints;
 import com.vesas.wfc.SimpleWFC.DIR;
@@ -22,15 +16,13 @@ import com.vesas.wfc.SimpleWFC.DIR;
 public class MyGdxGame extends ApplicationAdapter {
 
 	private Stage stage;
-	private Table table;
-	private Skin skin;
 
 	SpriteBatch batch;
 	ShapeRenderer shaperend;
 	Texture [] textures;
 
-	private int grid[][][] = null;
-	private int rots[][][] = null;
+	private int[][][] grid = null;
+	private int[][][] rots = null;
 	private SimpleWFC wfc = null;
 
 	float lighteffect = 0;
@@ -44,15 +36,9 @@ public class MyGdxGame extends ApplicationAdapter {
 	
 	@Override
 	public void create () {
-
-		skin = new Skin(Gdx.files.internal("uiskin.json"));
 		
 		stage = new Stage();
 		Gdx.input.setInputProcessor(stage);
-
-		table = new Table();
-		table.setFillParent(true);
-		stage.addActor(table);
 
 		// final TextButton button = new TextButton("Click me!", skin);
 		// table.add(button);
@@ -89,9 +75,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 
 		wfc = new SimpleWFC(GRID_W,GRID_H, tileCount, emptyAllowed, rotationsAllowed);
-        wfc.setSeed(6);
-
-        // wfc.setInputTexture("test_wfc_input1.png", 2, 2, 16, 16);
+        wfc.setSeed(29);
 
 		wfc.setTilingVertical(true);
 		wfc.setTilingHorizontal(true);

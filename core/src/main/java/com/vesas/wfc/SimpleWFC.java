@@ -15,12 +15,12 @@ import java.util.Set;
 
 public class SimpleWFC {
     
-    static public class Coord {
+    public static class Coord {
         public int x;
         public int y;
     }
 
-    static public class CoordFromTo {
+    public static class CoordFromTo {
 
         public CoordFromTo(int x, int y, int toX, int toY, DIR dir) {
             this.from.x = x;
@@ -39,7 +39,7 @@ public class SimpleWFC {
         public Coord to = new Coord();
     }
 
-    static public enum DIR {
+    public static enum DIR {
         N,E,S,W;
         
         // rotates counter clockwise (times must be between 0 and 3, inclusive)
@@ -92,11 +92,14 @@ public class SimpleWFC {
                 return DIR.values()[ord];
             }
                 
-            if(mask == 4)
+            if(mask == 4) {
                 ord = ord + 3;
                 if(ord > 3) 
                     ord = ord -4;
                 return DIR.values()[ord];
+            }
+
+            return this;
         }
 
         public DIR opposite() {
@@ -118,7 +121,7 @@ public class SimpleWFC {
     }
 
     //  Combination of state and direction allowed from that state
-    static public class StateDir {
+    public static class StateDir {
         public int state;
         public DIR dir;
 
@@ -155,7 +158,7 @@ public class SimpleWFC {
         }
     }
 
-    static public class Constraints {
+    public static class Constraints {
 
         public Constraints() {
         }
@@ -260,11 +263,6 @@ public class SimpleWFC {
 
     public int [][][] getGrid() {
         return idGrid;
-    }
-
-    // rotations, two opposing ports must have the same rotations for them to match
-    public int [][][] getRotationGrid() {
-        return rotationGrid;
     }
 
     private SimpleWFC() {
@@ -466,21 +464,12 @@ public class SimpleWFC {
         return allTiles;
     }
 
-    
     private Set<TileAndRotation> allTilesSet() {
 
         Set<TileAndRotation> allTiles = new HashSet<TileAndRotation>();
         allTiles.addAll(ALL_TILES);
         return allTiles;
     }
-    /*
-    private Set<Integer> allTilesSet() {
-
-        Set<Integer> allTiles = new HashSet<Integer>();
-        allTiles.addAll(ALL_TILES);
-        return allTiles;
-    }
-    */
 
     // In x, y position, looking at target dir, which tiles are allowed at the target position?
     private void filterAllowedTilesByTarget(int x, int y, DIR dir, Set<TileAndRotation> currentAllowedTiles) {
@@ -865,8 +854,6 @@ public class SimpleWFC {
             else {
                 // not at bottom edge or tiling
                 filterAllowedTilesAtSource(x,y,dir, currentAllowedTiles);
-                // filterAllowedTilesByTarget(x,y-1, dir.opposite(), currentAllowedTiles);
-
             }
         }
         else if(dir == DIR.W) {
@@ -877,8 +864,6 @@ public class SimpleWFC {
             else {
                 // not at left edge, or tiling
                 filterAllowedTilesAtSource(x,y,dir, currentAllowedTiles);
-                // filterAllowedTilesByTarget(x-1,y, dir.opposite(), currentAllowedTiles);
-
             }
         }
         else if(dir == DIR.E) {
@@ -889,8 +874,6 @@ public class SimpleWFC {
             else {
                 // not at right edge, or tiling
                 filterAllowedTilesAtSource(x,y,dir, currentAllowedTiles);
-                // filterAllowedTilesByTarget(x+1,y, dir.opposite(), currentAllowedTiles);
-
             }
         }
     }
@@ -1080,8 +1063,6 @@ public class SimpleWFC {
             System.out.println("ERROR: 0 tiles possible");
         }
 
-        int qwe = 0;
-
     }
 
     private int bitsOn(int val) {
@@ -1099,8 +1080,6 @@ public class SimpleWFC {
 
         int x = this.lastModifiedX;
         int y = this.lastModifiedY;
-
-        // System.out.println(String.format("propagate from x: %d y: %d", x, y));
 
         // north direction
         if(y == (height-1)) {
