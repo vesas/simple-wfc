@@ -7,7 +7,6 @@ import com.vesas.wfc.SimpleWFC.DIR;
 
 public class SimpleWFCTest {
     
-
     @Test
     public void testRotation1() {
         SimpleWFC wfc = new SimpleWFC(2,1, 3, true, true);
@@ -25,11 +24,13 @@ public class SimpleWFCTest {
         wfc.setValuesAt(1,0,0,2);
         wfc.setRotationsAt(1,0,15,15);
         
+        System.out.println("starting");
         wfc.setConstraints(constraints);
         wfc.printConstraints();
         wfc.printGrid();
         wfc.printRotations();
 
+        System.out.println("running one round");
         wfc.runOneRound();
         wfc.printGrid();
         wfc.printRotations();

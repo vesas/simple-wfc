@@ -229,15 +229,21 @@ public class SimpleWFC {
 
     // grid of arrays of tile rotations
     // rotation array contains 1,2,4,8 values superimposed
+    // 1 = no rotation
+    // 2 = one rotation counter clockwise (CCW)
+    // 4 = two rotations CCW
+    // 8 = three rotations CCW
     // x, y, [array of rotation values]
     private int rotationGrid[][][] = null;
 
+    // width and height of grid
     private int width;
     private int height;
 
+    // number of tiles, including the empty tile
     private int tileCount = 0;
 
-    // should the whole texture tile?
+    // should the output texture tile?
     private boolean tilingVertical = false;
     private boolean tilingHorizontal = false;
 
@@ -304,7 +310,7 @@ public class SimpleWFC {
 
                 int [] rotations = rotationGrid[temp_w][temp_h];
 
-                // 8 + 4 + 2 + 1 = 15
+                // 8 + 4 + 2 + 1 = 15 (means: all rotations still possible)
                 for(int i= 0; i < rotations.length;i++) {
                     if(rotationsAllowed)
                         rotations[i] = 15;
@@ -348,6 +354,7 @@ public class SimpleWFC {
         return possibilities == null ? 0 : possibilities.length;
     }
 
+    // Find a tile which has some choices left, but also has the lowest number of choices
     // TODO: mod this to include surrounding cells (and edges)
     public int findLowEntrypy() {
 
@@ -937,8 +944,8 @@ public class SimpleWFC {
         for(int i = 0; i < sourceTiles.length; i++) {
             int tile = sourceTiles[i];
             int rots = sourceRotations[i];
-            TileAndRotation t = new TileAndRotation(tile, rots);
-            ret.add(t);
+
+            ret.add(new TileAndRotation(tile, rots));
         }
 
         return ret;
@@ -963,14 +970,14 @@ public class SimpleWFC {
         int x = pos % stride;
 
         Set<TileAndRotation> allAllowedTiles = this.tilesAndRotations(x,y);
-                // check allowedTiles against all directions, and remove impossible ones
-
+        
+        // check allowedTiles set against all directions, and remove impossible ones
         filterTileChoices(x, y, DIR.N, allAllowedTiles);
         filterTileChoices(x, y, DIR.S, allAllowedTiles);
         filterTileChoices(x, y, DIR.E, allAllowedTiles);
         filterTileChoices(x, y, DIR.W, allAllowedTiles);
 
-        // Ok, multiple choices available, now OBSERVE and collapse to one choice
+        // Ok, multiple choices available, now OBSERVE (choose random one) and collapse to one choice
         if(allAllowedTiles.size() > 1) {
 
             int rand = random.nextInt(allAllowedTiles.size());
@@ -1346,20 +1353,21 @@ public class SimpleWFC {
 
     public boolean isFinished() {
 
-        boolean ret = true;
+        // Loop over the whole grid, if any tile has more than one possibility, we are not finished
         for(int h = 0; h < this.height;h++) {
             for(int w = 0; w < this.width;w++) {
 
+                // Get values which are still possible 
                 int [] possibilities = idGrid[w][h];
-                int pos_len = possibilities.length;
 
-                if(pos_len > 1) {
-                    ret = false;
+                // We still have multiple possibilities
+                if(possibilities.length > 1) {
+                    return false;
                 }
             }
         }
 
-        return ret;
+        return true;
     }
 
     public void runOneRound() {
