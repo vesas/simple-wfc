@@ -1,6 +1,7 @@
 package com.vesas.wfc;
 
 import org.junit.jupiter.api.Test;
+import static org.junit.Assert.*;
 
 import com.vesas.wfc.SimpleWFC.Constraints;
 import com.vesas.wfc.SimpleWFC.DIR;
@@ -9,6 +10,10 @@ public class SimpleWFCTest {
     
     @Test
     public void testRotation1() {
+
+        // 
+        // Setup the test case
+        // 
         SimpleWFC wfc = new SimpleWFC(2,1, 3, true, true);
         
         Constraints constraints = new Constraints();
@@ -24,16 +29,37 @@ public class SimpleWFCTest {
         wfc.setValuesAt(1,0,0,2);
         wfc.setRotationsAt(1,0,15,15);
         
-        System.out.println("starting");
         wfc.setConstraints(constraints);
         wfc.printConstraints();
         wfc.printGrid();
         wfc.printRotations();
-
-        System.out.println("running one round");
+        
+        // 
+        // Run just one round
+        // 
         wfc.runOneRound();
         wfc.printGrid();
         wfc.printRotations();
+
+
+        // 
+        // Examine and assert results
+        // 
+        int [] grid0 = wfc.getGrid(0, 0);
+        int [] rots0 = wfc.getRots(0, 0);
+        
+        int [] grid1 = wfc.getGrid(1, 0);
+        int [] rots1 = wfc.getRots(1, 0);
+
+        // position [0,0] should have only tile 1 as a possibility at this point
+        assertArrayEquals(grid0, new int[]{1});
+        // position [1,0] should have only tile 2 as a possibility at this point
+        assertArrayEquals(grid1, new int[]{2});
+
+        // position [0,0] should have only rotation 8 as a possibility. (possible rotations are 1,2,4,8 and combinations)
+        assertArrayEquals(rots0, new int[]{8});
+        // position [1,0] should have only rotation 8 as a possibility as well. (possible rotations are 1,2,4,8 and combinations)
+        assertArrayEquals(rots1, new int[]{8});
 
     }
 

@@ -15,7 +15,7 @@ import java.util.Set;
 
 public class SimpleWFC {
     
-    public static class Coord {
+    private static class Coord {
         public int x;
         public int y;
     }
@@ -42,7 +42,7 @@ public class SimpleWFC {
     public static enum DIR {
         N,E,S,W;
         
-        // rotates counter clockwise (times must be between 0 and 3, inclusive)
+        // Returns direction value rotated counter clockwise (times must be between 0 and 3, inclusive)
         public DIR rotateCCW(int times) {
 
             int ord = this.ordinal();
@@ -224,11 +224,11 @@ public class SimpleWFC {
         this.constraints = constraints;
     }
 
-    // grid of arrays of tile id's
+    // grid of arrays of still possible tile id's
     private int idGrid[][][] = null;
 
-    // grid of arrays of tile rotations
-    // rotation array contains 1,2,4,8 values superimposed
+    // grid of arrays of still possible tile rotations
+    // rotation array contains 1,2,4,8 values superimposed, 8+4+2+1 = 15 means all rotations still possible
     // 1 = no rotation
     // 2 = one rotation counter clockwise (CCW)
     // 4 = two rotations CCW
@@ -269,6 +269,14 @@ public class SimpleWFC {
 
     public int [][][] getGrid() {
         return idGrid;
+    }
+
+    public int [] getGrid(int x, int y) {
+        return idGrid[x][y];
+    }
+
+    public int [] getRots(int x, int y) {
+        return rotationGrid[x][y];
     }
 
     private SimpleWFC() {
@@ -333,6 +341,7 @@ public class SimpleWFC {
         return lastModifiedY;
     }
 
+    // To force deterministic output, set the seed
     public void setSeed(int val) {
         random = new Random(val);
     }
@@ -1370,6 +1379,7 @@ public class SimpleWFC {
         return true;
     }
 
+    // runs only one round of observe -> propagate cycle
     public void runOneRound() {
 
         observe();
@@ -1380,6 +1390,7 @@ public class SimpleWFC {
         finished = this.isFinished();
     }
 
+    // runs the observe -> propagate cycle until finished
     public void run() {
 
         this.finished = false;
