@@ -120,25 +120,25 @@ public class MyGdxGame extends ApplicationAdapter {
 				if(key == '1') {
 					runAll();
 				}
-				if(key == '2') {
+				else if(key == '2') {
 					saveTexture();
 				}
-				if(key == ' ') {
+				else if(key == ' ') {
 					runRound();
 				}
-				if(key == 'g')  {
+				else if(key == 'g')  {
 					wfc.printGrid();
 				}
-				if(key == 'c')  {
+				else if(key == 'c')  {
 					wfc.printConstraints();
 				}
-				if(key == 'r')  {
+				else if(key == 'r')  {
 					wfc.printRotations();
 				}
-				if(key == 'o')  {
+				else if(key == 'o')  {
 					wfc.observe();
 				}
-				if(key == 'p')  {
+				else if(key == 'p')  {
 					wfc.propagate();
 				}
                 return true;
@@ -167,7 +167,6 @@ public class MyGdxGame extends ApplicationAdapter {
 	}
 
 	private void runRound() {
-		System.out.println("SPACE!");
 
 		wfc.runOneRound();
 		

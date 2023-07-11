@@ -39,7 +39,7 @@ public class SimpleWFC {
         public Coord to = new Coord();
     }
 
-    public static enum DIR {
+    public enum DIR {
         N,E,S,W;
         
         // Returns direction value rotated counter clockwise (times must be between 0 and 3, inclusive)
@@ -73,29 +73,36 @@ public class SimpleWFC {
         // make it 1, 2, 4, 8
         public DIR fromBitMask(int mask) {
 
-            if(mask == 0)
+            if(mask == 0) {
                 return this;
+            }
 
             int ord = this.ordinal();
 
             if(mask == 1) {
                 ord++;
-                if(ord > 3) 
+                if(ord > 3) {
                     ord = 0;
+                }
+
                 return DIR.values()[ord];
             }
                 
             if(mask == 2) {
                 ord = ord + 2;
-                if(ord > 3) 
+                if(ord > 3) {
                     ord = ord -4;
+                }
+
                 return DIR.values()[ord];
             }
                 
             if(mask == 4) {
                 ord = ord + 3;
-                if(ord > 3) 
+                if(ord > 3) {
                     ord = ord -4;
+                }
+
                 return DIR.values()[ord];
             }
 
@@ -128,14 +135,17 @@ public class SimpleWFC {
         @Override
         public boolean equals(Object o) {
             
-            if (this == o)
+            if (this == o) {
                 return true;
-            
-            if (o == null)
+            }
+
+            if (o == null) {
                 return false;
+            }
             
-            if (getClass() != o.getClass())
+            if (getClass() != o.getClass()) {
                 return false;
+            }
             
             StateDir stateDir = (StateDir)o;
         
@@ -145,10 +155,10 @@ public class SimpleWFC {
 
         @Override
         public int hashCode() {
-            final int PRIME = 31;
+            final int prime = 31;
             int hash = 7;
-            hash += PRIME * hash + this.state;
-            hash += PRIME * hash + this.dir.ordinal();
+            hash += prime * hash + this.state;
+            hash += prime * hash + this.dir.ordinal();
             return hash;
 
         }
@@ -160,9 +170,6 @@ public class SimpleWFC {
 
     public static class Constraints {
 
-        public Constraints() {
-        }
-        
         Map<StateDir,Integer> ports = new HashMap<StateDir,Integer>();
 
         public void addPort(int source, DIR dir, int portId) {
@@ -180,10 +187,12 @@ public class SimpleWFC {
 
             Integer port = ports.get(stateDir);
 
-            if(port != null)
+            if(port != null) {
                 return port;
-            else
+            }
+            else {
                 return -1;
+            }
         }
 
         public int getPort(int source, DIR dir) {
@@ -193,12 +202,13 @@ public class SimpleWFC {
 
             Integer port = ports.get(stateDir);
 
-            if(port != null)
+            if(port != null) {
                 return port;
-            else
+            }
+            else {
                 return -1;
+            }
         }
-
 
         public void printConstraints() {
 
@@ -240,8 +250,6 @@ public class SimpleWFC {
     private int width;
     private int height;
 
-    // number of tiles, including the empty tile
-    private int tileCount = 0;
 
     // should the output texture tile?
     private boolean tilingVertical = false;
@@ -279,51 +287,52 @@ public class SimpleWFC {
         return rotationGrid[x][y];
     }
 
-    private SimpleWFC() {
-
-    }
-
     public SimpleWFC(int w, int h, int tileCount, boolean emptyAllowed, boolean rotationsAllowed) {
         
         this.emptyAllowed = emptyAllowed;
-        this.tileCount = tileCount;
         this.width = w;
         this.height = h;
 
-        idGrid = new int[w][h][this.tileCount];
-        rotationGrid = new int[w][h][this.tileCount];
+        idGrid = new int[w][h][tileCount];
+        rotationGrid = new int[w][h][tileCount];
 
-        for(int i = 0; i < this.tileCount;i++) {
+        for(int i = 0; i < tileCount;i++) {
             // 1 = no rot
             // 2 = one rotation (CCW)
             // 4 = two CCW
             // 8 = three CCW
-            if(rotationsAllowed)
+            if(rotationsAllowed) {
                 ALL_TILES.add(new TileAndRotation(i, 15));
-            else
+            }
+            else {
                 ALL_TILES.add(new TileAndRotation(i, 1));
+            }
         }
 
-        for(int temp_h = 0; temp_h < this.height;temp_h++) {
-            for(int temp_w = 0; temp_w < this.width;temp_w++) {
+        for(int tempH = 0; tempH < this.height;tempH++) {
+            for(int tempW = 0; tempW < this.width;tempW++) {
 
-                int [] possibilities = idGrid[temp_w][temp_h];
+                int [] possibilities = idGrid[tempW][tempH];
 
                 for(int i= 0; i < possibilities.length;i++) {
-                    if(emptyAllowed)
+                    if(emptyAllowed) {
                         possibilities[i] = i;
-                    else 
+                    }
+                    else {
                         possibilities[i] = i + 1;
+                    }
                 }
 
-                int [] rotations = rotationGrid[temp_w][temp_h];
+                int [] rotations = rotationGrid[tempW][tempH];
 
                 // 8 + 4 + 2 + 1 = 15 (means: all rotations still possible)
                 for(int i= 0; i < rotations.length;i++) {
-                    if(rotationsAllowed)
+                    if(rotationsAllowed) {
                         rotations[i] = 15;
-                    else
+                    }
+                    else {
                         rotations[i] = 1;
+                    }
                 }
             }
         }
@@ -433,12 +442,12 @@ public class SimpleWFC {
             for(int w = 0; w < this.width;w++) {
 
                 int [] possibilities = idGrid[w][h];
-                int pos_len = possibilities.length;
+                int posLen = possibilities.length;
 
                 System.out.print(" [");
-                for(int i = 0; i < pos_len; i++) {
+                for(int i = 0; i < posLen; i++) {
                     System.out.print("" + possibilities[i] );
-                    if(i < (pos_len-1)) {
+                    if(i < (posLen-1)) {
                         System.out.print(",");
                     }
                 }
@@ -454,13 +463,13 @@ public class SimpleWFC {
             for(int w = 0; w < this.width;w++) {
 
                 int [] rots = rotationGrid[w][h];
-                int rots_len = rots.length;
+                int rotsLen = rots.length;
 
                 System.out.print(" [");
                 int counter = 0;
                 for (int rot : rots) {
                     System.out.print("" + rot );
-                    if(counter < (rots_len-1)) {
+                    if(counter < (rotsLen-1)) {
                         System.out.print(",");
                     }
                     counter++;
@@ -557,23 +566,27 @@ public class SimpleWFC {
         
         if((targetRot & 1) == 1) {
             int targetPort = constraints.getPort(targetTile, dir);
-            if(targetPort == port)
+            if(targetPort == port) {
                 return true;
+            }
         }
         if((targetRot & 2) == 2) {
             int targetPort = constraints.getPort(targetTile, dir.rotateCCW(1));
-            if(targetPort == port)
+            if(targetPort == port) {
                 return true;
+            }
         }
         if((targetRot & 4) == 4) {
             int targetPort = constraints.getPort(targetTile, dir.rotateCCW(2));
-            if(targetPort == port)
+            if(targetPort == port) {
                 return true;
+            }
         }
         if((targetRot & 8) == 8) {
             int targetPort = constraints.getPort(targetTile, dir.rotateCCW(3));
-            if(targetPort == port)
+            if(targetPort == port) {
                 return true;
+            }
         }
 
         return false;
@@ -588,23 +601,27 @@ public class SimpleWFC {
 
             if((targetRot & 1) == 1) {
                 int targetPort = constraints.getPort(targetTile, dir);
-                if(targetPort == -1)
+                if(targetPort == -1) {
                     return false;
+                }
             }
             if((targetRot & 2) == 2) {
                 int targetPort = constraints.getPort(targetTile, dir.rotateCCW(1));
-                if(targetPort == -1)
+                if(targetPort == -1) {
                     return false;
+                }
             }
             if((targetRot & 4) == 4) {
                 int targetPort = constraints.getPort(targetTile, dir.rotateCCW(2));
-                if(targetPort == -1)
+                if(targetPort == -1) {
                     return false;
+                }
             }
             if((targetRot & 8) == 8) {
                 int targetPort = constraints.getPort(targetTile, dir.rotateCCW(3));
-                if(targetPort == -1)
+                if(targetPort == -1) {
                     return false;
+                }
             }
         }
         
@@ -621,23 +638,27 @@ public class SimpleWFC {
 
             if((targetRot & 1) == 1) {
                 int targetPort = constraints.getPort(targetTile, dir);
-                if(targetPort == port)
+                if(targetPort == port) {
                     return true;
+                }
             }
             if((targetRot & 2) == 2) {
                 int targetPort = constraints.getPort(targetTile, dir.rotateCCW(1));
-                if(targetPort == port)
+                if(targetPort == port) {
                     return true;
+                }
             }
             if((targetRot & 4) == 4) {
                 int targetPort = constraints.getPort(targetTile, dir.rotateCCW(2));
-                if(targetPort == port)
+                if(targetPort == port) {
                     return true;
+                }
             }
             if((targetRot & 8) == 8) {
                 int targetPort = constraints.getPort(targetTile, dir.rotateCCW(3));
-                if(targetPort == port)
+                if(targetPort == port) {
                     return true;
+                }
             }
         }
         
@@ -664,7 +685,7 @@ public class SimpleWFC {
             if(dir == DIR.N) {
 
                 targetX = x;
-                if(y == (this.height-1)) {
+                if(y == this.height-1) {
                     targetY = 0;
                 }
                 else {
@@ -701,7 +722,7 @@ public class SimpleWFC {
             else if(dir == DIR.E) {
 
                 targetY = y;
-                if(x == (this.width-1)) {
+                if(x == this.width-1) {
                     targetX = 0;
                 }
                 else {
@@ -918,19 +939,28 @@ public class SimpleWFC {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
+            if (this == obj) {
                 return true;
-            if (obj == null)
+            }
+            if (obj == null) {
                 return false;
-            if (getClass() != obj.getClass())
+            }
+            if (getClass() != obj.getClass()) {
                 return false;
+            }
+
             TileAndRotation other = (TileAndRotation) obj;
-            if (!getEnclosingInstance().equals(other.getEnclosingInstance()))
+            if (!getEnclosingInstance().equals(other.getEnclosingInstance())) {
                 return false;
-            if (rot != other.rot)
+            }
+            if (rot != other.rot) {
                 return false;
-            if (tile != other.tile)
+            }
+                
+            if (tile != other.tile) {
                 return false;
+            }
+
             return true;
         }
         private SimpleWFC getEnclosingInstance() {
@@ -965,8 +995,9 @@ public class SimpleWFC {
         int pos = this.findLowEntrypy();
 
         int lowestEntropy = -1;
-        if(pos > -1)
+        if(pos > -1) {
             lowestEntropy = this.getLocalEntrypyAt(pos);
+        }
 
         // not found, we finished?
         if(lowestEntropy == -1) {
@@ -1098,7 +1129,7 @@ public class SimpleWFC {
         int y = this.lastModifiedY;
 
         // north direction
-        if(y == (height-1)) {
+        if(y == height-1) {
             // at top, only add if wraparound is specified
             if(this.tilingVertical) {
                 CoordFromTo fromTo = new CoordFromTo(x,y, x, 0, DIR.N);
@@ -1138,7 +1169,7 @@ public class SimpleWFC {
         }
 
         // east
-        if(x == (width-1)) {
+        if(x == width-1) {
             // at right side, only add if wraparound is specified
             if(this.tilingVertical) {
                 CoordFromTo fromTo = new CoordFromTo(x,y, 0,y, DIR.E);
@@ -1165,7 +1196,7 @@ public class SimpleWFC {
                 // north
                 // do not go back to the same tile
                 if(co.dir != DIR.S) {
-                    if(co.from.y == (height-1)) {
+                    if(co.from.y == height-1) {
                         // at top, only add if wraparound is specified
                         if(this.tilingVertical) {
                             CoordFromTo fromTo = new CoordFromTo(x,y, x, 0, DIR.N);
@@ -1344,8 +1375,7 @@ public class SimpleWFC {
             }
         }
 
-        if(newlen != checktilesTo.length)
-            changed = true;
+        changed = newlen != checktilesTo.length;
 
         int [] tempres = new int[newlen];
         System.arraycopy(newtiles, 0, tempres, 0, newlen);
@@ -1384,8 +1414,9 @@ public class SimpleWFC {
 
         observe();
 
-        if(!finished)
+        if(!finished) {
             propagate();
+        }
 
         finished = this.isFinished();
     }
@@ -1398,8 +1429,9 @@ public class SimpleWFC {
         while(!finished) {
             observe();
 
-            if(!finished)
+            if(!finished) {
                 propagate();
+            }
 
             finished = this.isFinished();
         }
