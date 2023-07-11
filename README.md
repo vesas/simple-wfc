@@ -43,6 +43,8 @@ Output:
 
 ![example image](image2.png)
 
+### Some fun:
+
 ![example image](wfc7.gif)
 
 ## Dependencies
