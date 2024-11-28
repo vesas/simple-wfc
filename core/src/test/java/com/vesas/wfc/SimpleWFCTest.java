@@ -1,7 +1,8 @@
 package com.vesas.wfc;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.vesas.wfc.SimpleWFC.Constraints;
 import com.vesas.wfc.SimpleWFC.DIR;
@@ -164,5 +165,25 @@ public class SimpleWFCTest {
         SimpleWFC wfc = new SimpleWFC(2,2, 2, true, true);
         wfc.setPos(1,1, 0);
         wfc.printGrid();
+    }
+
+    @Test
+    public void testDirRotations() {
+        // Test CCW rotations
+        assertEquals(DIR.W, DIR.N.rotateCCW(1));
+        assertEquals(DIR.S, DIR.N.rotateCCW(2));
+        assertEquals(DIR.E, DIR.N.rotateCCW(3));
+        assertEquals(DIR.N, DIR.N.rotateCCW(4));
+        
+        // Test CW rotations
+        assertEquals(DIR.E, DIR.N.rotateCW(1));
+        assertEquals(DIR.S, DIR.N.rotateCW(2));
+        assertEquals(DIR.W, DIR.N.rotateCW(3));
+        assertEquals(DIR.N, DIR.N.rotateCW(4));
+        
+        // Test bitmask conversions (assuming 1=CW90, 2=CW180, 4=CW270)
+        assertEquals(DIR.E, DIR.N.fromBitMask(1));  // 90° CW
+        assertEquals(DIR.S, DIR.N.fromBitMask(2));  // 180° CW
+        assertEquals(DIR.W, DIR.N.fromBitMask(4));  // 270° CW
     }
 }

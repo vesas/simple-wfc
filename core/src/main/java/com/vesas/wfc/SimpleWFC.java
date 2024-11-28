@@ -42,88 +42,25 @@ public class SimpleWFC {
     public enum DIR {
         N,E,S,W;
         
-        // Returns direction value rotated counter clockwise (times must be between 0 and 3, inclusive)
+        // Returns direction value rotated counter clockwise 
         public DIR rotateCCW(int times) {
-
-            int ord = this.ordinal();
-
-            for(int i = 0; i < times; i++) {
-                ord--;
-                if(ord < 0) {
-                    ord = 3;
-                }
-            }
-            return DIR.values()[ord];
+            int newOrd = (this.ordinal() - times + 4) % 4;
+            return DIR.values()[newOrd];
         }
 
-        // rotates clockwise (times must be between 0 and 3, inclusive)
+        // rotates clockwise
         public DIR rotateCW(int times) {
-            int ord = this.ordinal();
-
-            for(int i = 0; i < times; i++) {
-                ord++;
-                if(ord > 3) {
-                    ord = 0;
-                }
-            }
-            return DIR.values()[ord];
+            int newOrd = (this.ordinal() + times) % 4;
+            return DIR.values()[newOrd];
         }
 
-        // wrong
-        // make it 1, 2, 4, 8
         public DIR fromBitMask(int mask) {
-
-            if(mask == 0) {
-                return this;
-            }
-
-            int ord = this.ordinal();
-
-            if(mask == 1) {
-                ord++;
-                if(ord > 3) {
-                    ord = 0;
-                }
-
-                return DIR.values()[ord];
-            }
-                
-            if(mask == 2) {
-                ord = ord + 2;
-                if(ord > 3) {
-                    ord = ord -4;
-                }
-
-                return DIR.values()[ord];
-            }
-                
-            if(mask == 4) {
-                ord = ord + 3;
-                if(ord > 3) {
-                    ord = ord -4;
-                }
-
-                return DIR.values()[ord];
-            }
-
-            return this;
+            if (mask == 0) return this;
+            return DIR.values()[(this.ordinal() + Integer.numberOfTrailingZeros(mask)) % 4];
         }
 
         public DIR opposite() {
-            if(this == N) {
-                return S;
-            }
-            else if(this == S) {
-                return N;
-            }
-            else if(this == W) {
-                return E;
-            }
-            else if(this == E) {
-                return W;
-            }
-
-            return S;
+            return DIR.values()[(ordinal() + 2) % 4];
         }
     }
 
